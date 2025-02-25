@@ -1,0 +1,99 @@
+@import 'tailwindcss';
+
+@variant dark (&:where(.dark, .dark *));
+
+@theme {
+	--radius-3xl: calc(var(--radius-lg) + 6px);
+	--radius-2xl: calc(var(--radius-lg) + 4px);
+	--radius-xl: calc(var(--radius-lg) + 2px);
+	--radius-lg: 0.5rem;
+	--radius-md: calc(var(--radius-lg) - 2px);
+	--radius-sm: calc(var(--radius-lg) - 4px);
+	--radius-xs: calc(var(--radius-lg) - 6px);
+
+	--font-geist-sans:
+		'Geist Sans', ui-sans-serif, system-ui, sans-serif, 'Apple Color Emoji',
+		'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
+
+	--color-background: hsl(0, 0%, 98%);
+	--color-foreground: hsl(0, 0%, 4%);
+
+	--color-primary: hsl(221, 83%, 53%);
+	--color-primary-foreground: hsl(0, 0%, 98%);
+
+	--color-secondary: hsl(0, 0%, 93.5%);
+	--color-secondary-foreground: hsl(0, 0%, 4%);
+
+	--color-muted: hsl(0, 0%, 93.5%);
+	--color-muted-foreground: hsl(0, 0%, 33%);
+
+	--color-accent: hsl(0, 0%, 93.5%);
+	--color-accent-foreground: hsl(0, 0%, 4%);
+
+	--color-success: hsl(142, 71%, 45%);
+	--color-success-foreground: hsl(0, 0%, 4%);
+
+	--color-destructive: hsl(0, 72%, 51%);
+	--color-destructive-foreground: hsl(0, 0%, 98%);
+
+	--color-border: hsl(0, 0%, 57%);
+	--color-input: hsl(0, 0%, 47%);
+	--color-ring: hsl(0, 0%, 4%);
+}
+
+@layer base {
+	.dark {
+		--color-background: hsl(226, 57%, 7%);
+		--color-foreground: hsl(0, 0%, 98%);
+
+		--color-primary: hsl(226, 71%, 43%);
+		--color-primary-foreground: hsl(0, 0%, 98%);
+
+		--color-secondary: hsl(215, 30%, 22%);
+		--color-secondary-foreground: hsl(0, 0%, 98%);
+
+		--color-muted: hsl(215, 30%, 22%);
+		--color-muted-foreground: hsl(0, 0%, 67%);
+
+		--color-accent: hsl(215, 30%, 22%);
+		--color-accent-foreground: hsl(0, 0%, 98%);
+
+		--color-success: hsl(142, 72%, 29%);
+		--color-success-foreground: hsl(0, 0%, 98%);
+
+		--color-destructive: hsl(0, 74%, 42%);
+		--color-destructive-foreground: hsl(0, 0%, 98%);
+
+		--color-border: hsl(0, 0%, 40%);
+		--color-input: hsl(0, 0%, 50%);
+		--color-ring: hsl(0, 0%, 98%);
+	}
+
+	@font-face {
+		font-family: 'Geist Sans';
+		src: url('/fonts/geist-sans/variable/Geist[wght].ttf') format('truetype');
+		font-weight: 100 900;
+		font-style: normal;
+		font-display: swap;
+	}
+
+	* {
+		@apply border-border;
+
+		&::selection {
+			@apply bg-primary text-primary-foreground;
+		}
+	}
+
+	html {
+		scroll-behavior: smooth;
+	}
+
+	body {
+		@apply bg-background font-geist-sans text-foreground min-h-screen w-full overflow-x-hidden;
+	}
+
+	.container {
+		@apply mx-auto max-w-[1400px] px-8;
+	}
+}
