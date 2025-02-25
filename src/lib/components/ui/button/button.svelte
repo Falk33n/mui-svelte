@@ -2,7 +2,7 @@
 	lang="ts"
 	module
 >
-	import type { WithChild, WithRef } from '$types';
+	import type { SvelteMouseEvent, WithChild, WithRef } from '$types';
 	import { cn } from '$utils';
 	import type {
 		HTMLAnchorAttributes,
@@ -11,33 +11,58 @@
 	import { tv, type VariantProps } from 'tailwind-variants';
 
 	export const buttonVariants = tv({
-		base: 'focus-visible:ring-ring focus-visible:ring-offset-1 focus-visible:ring-offset-background inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-md font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50',
+		base: 'relative overflow-hidden focus-visible:ring-ring inline-flex cursor-pointer items-center justify-center whitespace-nowrap rounded-md font-medium transition-all duration-200 focus-visible:outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:opacity-50 disabled:bg-secondary disabled:text-secondary-foreground',
 		variants: {
 			variant: {
-				default:
-					'bg-primary text-primary-foreground shadow hover:bg-primary/85 active:scale-[99%]',
-				secondary:
-					'bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/60 active:scale-[99%]',
-				outline:
-					'border-input bg-background border shadow-sm hover:bg-accent hover:text-accent-foreground active:scale-[99%]',
-				ghost:
-					'bg-background text-foreground hover:bg-accent hover:text-accent-foreground active:scale-[99%]',
-				destructive:
-					'bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/85 active:scale-[99%]',
-				link: 'bg-background text-primary hover:underline-offset-2 hover:underline',
+				text: 'bg-transparent hover:bg-primary/10 text-primary',
+				contained:
+					'bg-primary text-primary-foreground shadow-md hover:bg-primary/80',
+				outlined:
+					'border-primary/70 bg-transparent border text-primary hover:bg-primary/10 disabled:border-secondary-foreground/40',
 			},
 			size: {
-				default: 'h-9 px-4',
 				sm: 'h-8 px-3.5 text-sm',
+				md: 'h-9 px-4',
 				lg: 'h-10 px-5',
 				icon: 'size-9',
 			},
 		},
 		defaultVariants: {
-			variant: 'default',
-			size: 'default',
+			variant: 'contained',
+			size: 'md',
 		},
 	});
+
+	const createRipple = (
+		e: SvelteMouseEvent,
+		shade: 'primary' | 'foreground',
+	) => {
+		const target = e.currentTarget as HTMLElement;
+		const ripple = document.createElement('span');
+
+		const rect = target.getBoundingClientRect();
+		const size = Math.max(rect.width, rect.height);
+		const x = e.clientX - rect.left - size / 2;
+		const y = e.clientY - rect.top - size / 2;
+
+		const foregroundShadeColor = 'hsla(0, 0%, 98%, 0.45)';
+		const primaryShadeColor = 'hsla(226, 71%, 43%, 0.25)';
+		const shadeColor =
+			shade === 'primary' ? primaryShadeColor : foregroundShadeColor;
+
+		ripple.style.height = `${size}px`;
+		ripple.style.width = `${size}px`;
+		ripple.style.left = `${x}px`;
+		ripple.style.top = `${y}px`;
+		ripple.style.background = `${shadeColor}`;
+		ripple.classList.add('ripple-effect');
+
+		target.appendChild(ripple);
+
+		setTimeout(() => {
+			ripple.remove();
+		}, 450);
+	};
 
 	export type WithButtonSize = {
 		size?: VariantProps<typeof buttonVariants>['size'];
@@ -93,9 +118,8 @@
 		ref = $bindable(null),
 		class: className,
 		tabindex = 0,
-		variant = 'default',
-		size = 'default',
-		referrerpolicy,
+		variant = 'contained',
+		size = 'md',
 		download,
 		hreflang,
 		ping,
@@ -104,6 +128,11 @@
 		rel = href
 			? target === '_blank'
 				? 'noopener noreferrer'
+				: undefined
+			: undefined,
+		referrerpolicy = href
+			? target === '_blank'
+				? 'no-referrer'
 				: undefined
 			: undefined,
 		type = href === undefined ? 'button' : undefined,
@@ -119,6 +148,7 @@
 		popovertarget,
 		popovertargetaction,
 		value,
+		onclick,
 		children,
 		child,
 		...restProps
@@ -142,6 +172,12 @@
 					popovertargetaction,
 					value,
 				}),
+		onclick: (e) => {
+			if (!e.defaultPrevented) {
+				createRipple(e, variant === 'contained' ? 'foreground' : 'primary');
+			}
+			onclick?.(e);
+		},
 		tabindex,
 		class: cn(buttonVariants({ variant, size }), className),
 		...restProps,
@@ -159,3 +195,20 @@
 		{@render children?.()}
 	</svelte:element>
 {/if}
+
+<style>
+	:global(.ripple-effect) {
+		position: absolute;
+		border-radius: 50%;
+		transform: scale(0);
+		animation: ripple 0.45s linear;
+		pointer-events: none;
+	}
+
+	@keyframes ripple {
+		to {
+			transform: scale(4);
+			opacity: 0;
+		}
+	}
+</style>
