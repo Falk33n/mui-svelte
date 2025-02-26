@@ -1,22 +1,22 @@
 import type { Snippet } from 'svelte';
 
 export type WithoutRef<T> = Omit<T, 'ref'>;
-export type WithRef<T = undefined> = {
-	ref?: T extends undefined ? HTMLElement | null : T | null;
+export type WithRef<T, TRef = HTMLElement> = T & {
+	ref?: TRef | null;
 };
 
 export type WithoutChildren<T> = Omit<T, 'children'>;
-export type WithChildren = { children?: Snippet };
+export type WithChildren<T> = T & { children?: Snippet };
 
 export type WithoutChild<T> = Omit<T, 'child'>;
-export type WithChild<T = undefined> = {
-	child?: T extends undefined ? Snippet : Snippet<[{ props: T }]>;
+export type WithChild<T> = T & {
+	child?: Snippet<[{ props: T }]>;
 };
 
 export type WithoutChildrenAndChild<T> = Omit<T, 'children' | 'child'>;
-export type WithChildrenAndChild<T = undefined> = {
+export type WithChildrenAndChild<T> = {
 	children?: Snippet;
-	child?: T extends undefined ? Snippet : Snippet<[{ props: T }]>;
+	child?: Snippet<[{ props: T }]>;
 };
 
 export type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';

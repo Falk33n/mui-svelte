@@ -8,23 +8,35 @@
 		type ButtonBaseButtonElement,
 		type ButtonBaseWithoutHTML,
 	} from '$components/ui/button';
-	import { type IconType } from '$components/ui/icons';
 	import { cn } from '$utils';
 
-	type ButtonWithoutHTML = ButtonBaseWithoutHTML & {
+	export type ButtonProps = Omit<ButtonBaseWithoutHTML, 'size'> &
+		(ButtonBaseButtonElement | ButtonBaseAnchorElement);
+
+	/* 	type WithIconSizeAndAriaLabel = {
+		'size': 'icon';
+		'aria-label': string;
+		'aria-hidden'?: false;
+	};
+
+	type WithIconSizeAndAriaHidden = {
+		'size': 'icon';
+		'aria-hidden': true;
+		'aria-label'?: never;
+		'startIcon'?: never;
+		'endIcon'?: never;
+	};
+
+	type WithoutIconSize = {
+		size?: Exclude<ButtonSize, 'icon'>;
 		startIcon?: IconType;
 		endIcon?: IconType;
 	};
 
-	type ButtonElement = ButtonBaseButtonElement & {
-		loadingText?: string;
-	};
-
-	type AnchorElement = ButtonBaseAnchorElement & {
-		loadingText?: never;
-	};
-
-	export type ButtonProps = ButtonWithoutHTML & (ButtonElement | AnchorElement);
+	type IconButtonBaseProps =
+		| WithIconSizeAndAriaLabel
+		| WithIconSizeAndAriaHidden
+		| WithoutIconSize; */
 </script>
 
 <script lang="ts">
@@ -37,9 +49,6 @@
 		'aria-busy': ariaBusy = href === undefined && !ariaHidden
 			? isLoading
 			: undefined,
-		'startIcon': StartIcon,
-		'endIcon': EndIcon,
-		loadingText,
 		type = href === undefined ? 'button' : undefined,
 		children,
 		...restProps
@@ -50,7 +59,7 @@
 		href,
 		'aria-hidden': ariaHidden,
 		'aria-busy': isLoading || ariaBusy,
-		'class': className ? cn(className) : undefined,
+		'class': cn('size-10 rounded-full'),
 		...restProps,
 	});
 </script>
@@ -66,22 +75,7 @@
 	bind:isLoading
 	{...mergedProps as any}
 >
-	{#if isLoading || ariaBusy}
-		{#if loadingText}
-			{loadingText}
-		{:else}
-			{@render children?.()}
-		{/if}
-	{:else}
-		{#if StartIcon}
-			<StartIcon />
-		{/if}
-
+	{#if !isLoading && !ariaBusy}
 		{@render children?.()}
-
-		{#if EndIcon}
-			<EndIcon />
-		{/if}
 	{/if}
 </ButtonBase>
->>>>>>> fbaf6278ff5f8ac919d1e0210906ff2c522b26a9
