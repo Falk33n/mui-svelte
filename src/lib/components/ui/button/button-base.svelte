@@ -11,15 +11,48 @@
 	} from 'svelte/elements';
 	import { tv, type VariantProps } from 'tailwind-variants';
 
+	type SvelteMouseEvent = MouseEvent & {
+		currentTarget: EventTarget & (HTMLButtonElement | HTMLAnchorElement);
+	};
+
+	const createRipple = (
+		e: SvelteMouseEvent,
+		shade: 'primary' | 'foreground',
+	) => {
+		const rect = e.currentTarget.getBoundingClientRect();
+		const size = Math.max(rect.width, rect.height);
+		const x = e.clientX - rect.left - size / 2;
+		const y = e.clientY - rect.top - size / 2;
+
+		const foregroundShadeColor = 'hsla(0, 0%, 98%, 0.45)';
+		const primaryShadeColor = 'hsla(226, 71%, 43%, 0.25)';
+		const shadeColor =
+			shade === 'primary' ? primaryShadeColor : foregroundShadeColor;
+
+		const ripple = document.createElement('span');
+		ripple.style.height = `${size}px`;
+		ripple.style.width = `${size}px`;
+		ripple.style.left = `${x}px`;
+		ripple.style.top = `${y}px`;
+		ripple.style.background = `${shadeColor}`;
+		ripple.classList.add('ripple-animation');
+
+		e.currentTarget.appendChild(ripple);
+
+		setTimeout(() => {
+			ripple.remove();
+		}, 450);
+	};
+
 	export const buttonVariants = tv({
-		base: 'focus-visible:ring-ring focus-visible:ring-offset-1 gap-2 focus-visible:ring-offset-background inline-flex cursor-pointer items-center justify-center whitespace-nowrap font-medium transition-all text-base duration-200 uppercase focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:opacity-50 [&>svg]:size-5 rounded-md',
+		base: 'relative overflow-hidden focus-visible:ring-ring gap-2 inline-flex cursor-pointer items-center justify-center whitespace-nowrap font-medium transition-all text-base duration-200 uppercase focus-visible:outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:bg-secondary disabled:text-secondary-foreground disabled:opacity-50 [&>svg]:size-5 rounded-md',
 		variants: {
 			variant: {
+				text: 'bg-transparent hover:bg-primary/10 text-primary',
 				contained:
-					'bg-primary text-primary-foreground shadow-md hover:bg-primary/85',
+					'bg-primary text-primary-foreground shadow-md hover:bg-primary/80',
 				outlined:
-					'border-input bg-background border hover:bg-accent hover:text-accent-foreground',
-				text: 'bg-background text-foreground hover:bg-accent hover:text-accent-foreground',
+					'border-primary/70 bg-transparent border text-primary hover:bg-primary/10 disabled:border-secondary-foreground/40',
 			},
 			size: {
 				sm: 'h-8 px-3.5 text-sm [&>svg]:size-4',
@@ -104,6 +137,7 @@
 			? isLoading
 			: undefined,
 		disabled = href === undefined ? isLoading || ariaBusy === true : undefined,
+		onclick,
 		children,
 		...restProps
 	}: ButtonBaseProps = $props();
@@ -116,6 +150,18 @@
 		target,
 		rel,
 		tabindex,
+		'onclick': (e: SvelteMouseEvent) => {
+			if (!e.defaultPrevented) {
+				createRipple(e, variant === 'contained' ? 'foreground' : 'primary');
+			}
+
+			/* 
+        The `as any` on the event fixes the type union mismatch. 
+        TypeScript cannot compute the full union type, so we use 
+          `as any` to bypass the limitation.  
+      */
+			onclick?.(e as any);
+		},
 		'aria-busy': isLoading || ariaBusy,
 		'class': cn(buttonVariants({ variant, size }), className),
 		...restProps,

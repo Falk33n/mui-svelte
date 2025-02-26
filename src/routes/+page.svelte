@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { Button } from '$components/ui/button';
-	import { LoaderCircle } from '../lib/components/ui/icons';
+	import { LoaderCircle } from '$components/ui/icons';
 </script>
 
 <div class="mb-20 w-full">d</div>
@@ -21,10 +21,5 @@
 		startIcon={LoaderCircle}>Hello</Button
 	>
 
-	<Button
-		size="icon"
-		aria-hidden
-	>
-		X
-	</Button>
+	<Button aria-hidden>X</Button>
 </div>
