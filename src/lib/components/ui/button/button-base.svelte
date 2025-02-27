@@ -2,46 +2,79 @@
 	lang="ts"
 	module
 >
-	import { LoaderCircle, type IconType } from '$components/ui/icons';
+	import { LoaderCircle, type IconComponent } from '$components/ui/icons';
 	import type { WithRef } from '$types';
 	import { cn } from '$utils';
 	import type {
+		FocusEventHandler,
 		HTMLAnchorAttributes,
 		HTMLButtonAttributes,
+		MouseEventHandler,
 	} from 'svelte/elements';
 	import { tv, type VariantProps } from 'tailwind-variants';
 
-	type SvelteMouseEvent = MouseEvent & {
+	type ButtonMouseEvent = MouseEvent & {
 		currentTarget: EventTarget & (HTMLButtonElement | HTMLAnchorElement);
 	};
 
-	const createRipple = (
-		e: SvelteMouseEvent,
-		shade: 'primary' | 'foreground',
-	) => {
-		const rect = e.currentTarget.getBoundingClientRect();
-		const size = Math.max(rect.width, rect.height);
-		const x = e.clientX - rect.left - size / 2;
-		const y = e.clientY - rect.top - size / 2;
+	type ButtonFocusEvent = FocusEvent & {
+		currentTarget: EventTarget & (HTMLButtonElement | HTMLAnchorElement);
+	};
 
+	type RippleEvent = ButtonMouseEvent | ButtonFocusEvent;
+
+	const getRipplePosition = (e: RippleEvent, size: number) => {
+		const rect = e.currentTarget.getBoundingClientRect();
+
+		if (e instanceof MouseEvent) {
+			return {
+				x: e.clientX - rect.left - size / 2,
+				y: e.clientY - rect.top - size / 2,
+			};
+		}
+
+		return {
+			x: rect.width / 2 - size / 2,
+			y: rect.height / 2 - size / 2,
+		};
+	};
+
+	const getRippleShadeColor = (shade: 'primary' | 'foreground') => {
 		const foregroundShadeColor = 'hsla(0, 0%, 98%, 0.45)';
 		const primaryShadeColor = 'hsla(226, 71%, 43%, 0.25)';
-		const shadeColor =
-			shade === 'primary' ? primaryShadeColor : foregroundShadeColor;
+		return shade === 'primary' ? primaryShadeColor : foregroundShadeColor;
+	};
 
+	const createRippleElement = (
+		x: number,
+		y: number,
+		size: number,
+		shadeColor: string,
+	) => {
 		const ripple = document.createElement('span');
 		ripple.style.height = `${size}px`;
 		ripple.style.width = `${size}px`;
 		ripple.style.left = `${x}px`;
 		ripple.style.top = `${y}px`;
-		ripple.style.background = `${shadeColor}`;
+		ripple.style.background = shadeColor;
 		ripple.classList.add('ripple-animation');
+		return ripple;
+	};
 
+	const createRippleAnimation = (
+		e: RippleEvent,
+		shade: 'primary' | 'foreground',
+	) => {
+		const rect = e.currentTarget.getBoundingClientRect();
+		const size = Math.max(rect.width, rect.height);
+
+		const { x, y } = getRipplePosition(e, size);
+		const shadeColor = getRippleShadeColor(shade);
+
+		const ripple = createRippleElement(x, y, size, shadeColor);
 		e.currentTarget.appendChild(ripple);
 
-		setTimeout(() => {
-			ripple.remove();
-		}, 450);
+		setTimeout(() => ripple.remove(), 600);
 	};
 
 	export const buttonVariants = tv({
@@ -70,6 +103,43 @@
 
 	export type ButtonVariant = VariantProps<typeof buttonVariants>['variant'];
 
+	type ButtonMouseEventHandler =
+		| MouseEventHandler<HTMLButtonElement>
+		| MouseEventHandler<HTMLAnchorElement>
+		| null;
+
+	type ButtonFocusEventHandler =
+		| FocusEventHandler<HTMLButtonElement>
+		| FocusEventHandler<HTMLAnchorElement>
+		| null;
+
+	const handleButtonEvents = (
+		e: RippleEvent,
+		variant: ButtonVariant,
+		onclick?: ButtonMouseEventHandler,
+		onfocus?: ButtonFocusEventHandler,
+	) => {
+		/* 
+      The `as any` on the EventHandler props fixes the type union mismatch. 
+      TypeScript cannot compute the full union type, so we use 
+        `as any` to bypass the limitation.  
+    */
+
+		const shadeColor = variant === 'contained' ? 'foreground' : 'primary';
+
+		if (e instanceof MouseEvent) {
+			if (!e.defaultPrevented) createRippleAnimation(e, shadeColor);
+			onclick?.(e as any);
+			return;
+		}
+
+		if (!e.defaultPrevented && e.currentTarget.matches(':focus-visible')) {
+			createRippleAnimation(e, shadeColor);
+		}
+
+		onfocus?.(e as any);
+	};
+
 	export type ButtonBaseWithoutHTML = WithRef<{
 		variant?: ButtonVariant;
 		size?: ButtonSize;
@@ -84,7 +154,7 @@
 		target?: never;
 		download?: never;
 		isLoading?: boolean;
-		loadingIcon?: IconType;
+		loadingIcon?: IconComponent;
 	};
 
 	export type ButtonBaseAnchorElement = Omit<HTMLAnchorAttributes, 'href'> & {
@@ -138,11 +208,12 @@
 			: undefined,
 		disabled = href === undefined ? isLoading || ariaBusy === true : undefined,
 		onclick,
+		onfocus,
 		children,
 		...restProps
 	}: ButtonBaseProps = $props();
 
-	const mergedProps = $derived({
+	const reactiveProps = $derived({
 		type,
 		disabled,
 		referrerpolicy,
@@ -150,18 +221,9 @@
 		target,
 		rel,
 		tabindex,
-		'onclick': (e: SvelteMouseEvent) => {
-			if (!e.defaultPrevented) {
-				createRipple(e, variant === 'contained' ? 'foreground' : 'primary');
-			}
-
-			/* 
-        The `as any` on the event fixes the type union mismatch. 
-        TypeScript cannot compute the full union type, so we use 
-          `as any` to bypass the limitation.  
-      */
-			onclick?.(e as any);
-		},
+		'onclick': (e: ButtonMouseEvent) => handleButtonEvents(e, variant, onclick),
+		'onfocus': (e: ButtonFocusEvent) =>
+			handleButtonEvents(e, variant, undefined, onfocus),
 		'aria-busy': isLoading || ariaBusy,
 		'class': cn(buttonVariants({ variant, size }), className),
 		...restProps,
@@ -171,7 +233,7 @@
 <svelte:element
 	this={href ? 'a' : 'button'}
 	bind:this={ref}
-	{...mergedProps}
+	{...reactiveProps}
 >
 	{#if isLoading || ariaBusy}
 		{@render children?.()}
@@ -180,3 +242,20 @@
 		{@render children?.()}
 	{/if}
 </svelte:element>
+
+<style>
+	:global(.ripple-animation) {
+		position: absolute;
+		border-radius: 50%;
+		transform: scale(0);
+		animation: ripple 0.6s linear;
+		pointer-events: none;
+	}
+
+	@keyframes ripple {
+		to {
+			transform: scale(4);
+			opacity: 0;
+		}
+	}
+</style>
