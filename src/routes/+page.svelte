@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Button } from '$components/ui/button';
+	import { Button, IconButton } from '$components/ui/button';
 	import { LoaderCircle } from '$components/ui/icons';
 </script>
 
@@ -21,5 +21,5 @@
 		startIcon={LoaderCircle}>Hello</Button
 	>
 
-	<Button aria-hidden>X</Button>
+	<IconButton aria-label="Loading"><LoaderCircle /></IconButton>
 </div>
