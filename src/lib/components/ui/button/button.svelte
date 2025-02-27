@@ -8,12 +8,12 @@
 		type ButtonBaseButtonElement,
 		type ButtonBaseWithoutHTML,
 	} from '$components/ui/button';
-	import { type IconType } from '$components/ui/icons';
+	import type { IconComponent } from '$components/ui/icons';
 	import { cn } from '$utils';
 
 	type ButtonWithoutHTML = ButtonBaseWithoutHTML & {
-		startIcon?: IconType;
-		endIcon?: IconType;
+		startIcon?: IconComponent;
+		endIcon?: IconComponent;
 	};
 
 	type ButtonElement = ButtonBaseButtonElement & {
@@ -40,13 +40,11 @@
 		'startIcon': StartIcon,
 		'endIcon': EndIcon,
 		loadingText,
-		type = href === undefined ? 'button' : undefined,
 		children,
 		...restProps
 	}: ButtonProps = $props();
 
-	const mergedProps = $derived({
-		type,
+	const reactiveProps = $derived({
 		href,
 		'aria-hidden': ariaHidden,
 		'aria-busy': isLoading || ariaBusy,
@@ -56,7 +54,7 @@
 </script>
 
 <!-- 
-  The `as any` on the mergedProps spread fixes the following error... 
+  The `as any` on the `reactiveProps` spread fixes the following error... 
     "Expression produces a union type that is too complex to represent (TS2590)".  
   TypeScript cannot compute the full union type, so we use 
     `as any` to bypass the limitation.  
@@ -64,7 +62,7 @@
 <ButtonBase
 	bind:ref
 	bind:isLoading
-	{...mergedProps as any}
+	{...reactiveProps as any}
 >
 	{#if isLoading || ariaBusy}
 		{#if loadingText}
