@@ -10,36 +10,24 @@
 	} from '$components/ui/button';
 	import { cn } from '$utils';
 
-	export type ButtonProps = Omit<ButtonBaseWithoutHTML, 'size'> &
-		(
-			| Omit<ButtonBaseButtonElement, 'loadingIconPosition'>
-			| Omit<ButtonBaseAnchorElement, 'loadingIconPosition'>
-		);
+	type IconButtonWithoutHTML = Omit<ButtonBaseWithoutHTML, 'size'>;
 
-	/* 	type WithIconSizeAndAriaLabel = {
-		'size': 'icon';
+	type WithAriaHidden = {
+		'aria-hidden': true;
+		'aria-label'?: never;
+	};
+
+	type WithoutAriaHidden = {
 		'aria-label': string;
 		'aria-hidden'?: false;
 	};
 
-	type WithIconSizeAndAriaHidden = {
-		'size': 'icon';
-		'aria-hidden': true;
-		'aria-label'?: never;
-		'startIcon'?: never;
-		'endIcon'?: never;
-	};
-
-	type WithoutIconSize = {
-		size?: Exclude<ButtonSize, 'icon'>;
-		startIcon?: IconType;
-		endIcon?: IconType;
-	};
-
-	type IconButtonBaseProps =
-		| WithIconSizeAndAriaLabel
-		| WithIconSizeAndAriaHidden
-		| WithoutIconSize; */
+	export type IconButtonProps = IconButtonWithoutHTML &
+		(WithAriaHidden | WithoutAriaHidden) &
+		(
+			| Omit<ButtonBaseButtonElement, 'loadingIconPosition'>
+			| Omit<ButtonBaseAnchorElement, 'loadingIconPosition'>
+		);
 </script>
 
 <script lang="ts">
@@ -52,23 +40,21 @@
 		'aria-busy': ariaBusy = href === undefined && !ariaHidden
 			? isLoading
 			: undefined,
-		type = href === undefined ? 'button' : undefined,
 		children,
 		...restProps
-	}: ButtonProps = $props();
+	}: IconButtonProps = $props();
 
-	const mergedProps = $derived({
-		type,
+	const reactiveProps = $derived({
 		href,
 		'aria-hidden': ariaHidden,
 		'aria-busy': isLoading || ariaBusy,
-		'class': cn('size-10 rounded-full'),
+		'class': cn('size-10 p-0 rounded-full', className),
 		...restProps,
 	});
 </script>
 
 <!-- 
-  The `as any` on the mergedProps spread fixes the following error... 
+  The `as any` on the `reactiveProps` spread fixes the following error... 
     "Expression produces a union type that is too complex to represent (TS2590)".  
   TypeScript cannot compute the full union type, so we use 
     `as any` to bypass the limitation.  
@@ -76,7 +62,7 @@
 <ButtonBase
 	bind:ref
 	bind:isLoading
-	{...mergedProps as any}
+	{...reactiveProps as any}
 >
 	{#if !isLoading && !ariaBusy}
 		{@render children?.()}
