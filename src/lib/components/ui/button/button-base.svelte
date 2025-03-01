@@ -78,14 +78,13 @@
 	};
 
 	export const buttonVariants = tv({
-		base: 'relative overflow-hidden focus-visible:ring-ring gap-2 inline-flex cursor-pointer items-center justify-center whitespace-nowrap font-medium transition-all text-base duration-200 uppercase focus-visible:outline-none focus-visible:ring-2 disabled:pointer-events-none disabled:bg-secondary disabled:text-secondary-foreground disabled:opacity-50 [&>svg]:size-5 rounded-md',
+		base: 'relative overflow-hidden bg-transparent rounded-md gap-2 inline-flex cursor-pointer items-center justify-center whitespace-nowrap font-medium transition-all text-base duration-200 uppercase focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:bg-secondary disabled:text-secondary-foreground disabled:opacity-50 [&>svg]:size-5',
 		variants: {
 			variant: {
-				text: 'bg-transparent hover:bg-primary/10 text-primary',
-				contained:
-					'bg-primary text-primary-foreground shadow-md hover:bg-primary/80',
-				outlined:
-					'border-primary/70 bg-transparent border text-primary hover:bg-primary/10 disabled:border-secondary-foreground/40',
+				text: '',
+				link: 'hover:underline hover:underline-offset-2',
+				contained: 'shadow-md',
+				outlined: 'border disabled:border-secondary-foreground/40',
 			},
 			color: {
 				primary: '',
@@ -98,6 +97,74 @@
 				lg: 'h-10 px-5',
 			},
 		},
+		compoundVariants: [
+			{
+				variant: 'link',
+				size: ['sm', 'md', 'lg'],
+				class: 'h-[unset] px-[unset]',
+			},
+			{
+				variant: ['text', 'link', 'outlined'],
+				color: 'primary',
+				class: 'text-primary',
+			},
+			{
+				variant: ['text', 'link', 'contained', 'outlined'],
+				color: 'secondary',
+				class: 'text-secondary-foreground',
+			},
+			{
+				variant: ['text', 'link', 'outlined'],
+				color: 'destructive',
+				class: 'text-destructive',
+			},
+			{
+				variant: ['text', 'outlined'],
+				color: 'primary',
+				class: 'hover:bg-primary/10',
+			},
+			{
+				variant: ['text', 'outlined'],
+				color: 'secondary',
+				class: 'hover:bg-secondary/10',
+			},
+			{
+				variant: ['text', 'outlined'],
+				color: 'destructive',
+				class: 'hover:bg-destructive/10',
+			},
+			{
+				variant: 'contained',
+				color: 'primary',
+				class: 'bg-primary text-primary-foreground hover:bg-primary/80',
+			},
+			{
+				variant: 'contained',
+				color: 'secondary',
+				class: 'bg-secondary hover:bg-secondary/80',
+			},
+			{
+				variant: 'contained',
+				color: 'destructive',
+				class:
+					'bg-destructive text-destructive-foreground hover:bg-destructive/80',
+			},
+			{
+				variant: 'outlined',
+				color: 'primary',
+				class: 'border-primary/70',
+			},
+			{
+				variant: 'outlined',
+				color: 'secondary',
+				class: 'border-secondary/70',
+			},
+			{
+				variant: 'outlined',
+				color: 'destructive',
+				class: 'border-destructive/70',
+			},
+		],
 		defaultVariants: {
 			variant: 'contained',
 			color: 'primary',
@@ -136,12 +203,17 @@
 		const shadeColor = variant === 'contained' ? 'foreground' : 'primary';
 
 		if (e instanceof MouseEvent) {
-			if (!e.defaultPrevented) createRippleAnimation(e, shadeColor);
+			if (!e.defaultPrevented && variant !== 'link')
+				createRippleAnimation(e, shadeColor);
 			onclick?.(e as any);
 			return;
 		}
 
-		if (!e.defaultPrevented && e.currentTarget.matches(':focus-visible')) {
+		if (
+			!e.defaultPrevented &&
+			e.currentTarget.matches(':focus-visible') &&
+			variant !== 'link'
+		) {
 			createRippleAnimation(e, shadeColor);
 		}
 
@@ -200,6 +272,7 @@
 		'class': className,
 		tabindex = 0,
 		variant = 'contained',
+		color = 'primary',
 		size = 'md',
 		'loadingIcon': LoadingIcon = LoaderCircle,
 		loadingIconPosition = 'end',
@@ -240,7 +313,14 @@
 		'onfocus': (e: ButtonFocusEvent) =>
 			handleButtonEvents(e, variant, undefined, onfocus),
 		'aria-busy': isLoading || ariaBusy,
-		'class': cn(buttonVariants({ variant, size }), className),
+		'class': cn(
+			buttonVariants({
+				variant,
+				color,
+				size,
+			}),
+			className,
+		),
 		...restProps,
 	});
 </script>
