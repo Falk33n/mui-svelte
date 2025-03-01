@@ -11,7 +11,10 @@
 	import { cn } from '$utils';
 
 	export type ButtonProps = Omit<ButtonBaseWithoutHTML, 'size'> &
-		(ButtonBaseButtonElement | ButtonBaseAnchorElement);
+		(
+			| Omit<ButtonBaseButtonElement, 'loadingIconPosition'>
+			| Omit<ButtonBaseAnchorElement, 'loadingIconPosition'>
+		);
 
 	/* 	type WithIconSizeAndAriaLabel = {
 		'size': 'icon';
