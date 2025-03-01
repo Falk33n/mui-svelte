@@ -5,6 +5,7 @@ export {
 	type ButtonBaseButtonElement,
 	type ButtonBaseProps,
 	type ButtonBaseWithoutHTML,
+	type ButtonColor,
 	type ButtonSize,
 	type ButtonVariant,
 } from './button-base.svelte';

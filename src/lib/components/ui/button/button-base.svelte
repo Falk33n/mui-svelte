@@ -87,6 +87,11 @@
 				outlined:
 					'border-primary/70 bg-transparent border text-primary hover:bg-primary/10 disabled:border-secondary-foreground/40',
 			},
+			color: {
+				primary: '',
+				secondary: '',
+				destructive: '',
+			},
 			size: {
 				sm: 'h-8 px-3.5 text-sm [&>svg]:size-4',
 				md: 'h-9 px-5',
@@ -95,13 +100,16 @@
 		},
 		defaultVariants: {
 			variant: 'contained',
+			color: 'primary',
 			size: 'md',
 		},
 	});
 
-	export type ButtonSize = VariantProps<typeof buttonVariants>['size'];
-
 	export type ButtonVariant = VariantProps<typeof buttonVariants>['variant'];
+
+	export type ButtonColor = VariantProps<typeof buttonVariants>['color'];
+
+	export type ButtonSize = VariantProps<typeof buttonVariants>['size'];
 
 	type ButtonMouseEventHandler =
 		| MouseEventHandler<HTMLButtonElement>
@@ -142,10 +150,11 @@
 
 	export type ButtonBaseWithoutHTML = WithRef<{
 		variant?: ButtonVariant;
+		color?: ButtonColor;
 		size?: ButtonSize;
 	}>;
 
-	export type ButtonBaseButtonElement = HTMLButtonAttributes & {
+	export type ButtonBaseButtonElement = Omit<HTMLButtonAttributes, 'color'> & {
 		href?: never;
 		hreflang?: never;
 		ping?: never;
@@ -155,9 +164,13 @@
 		download?: never;
 		isLoading?: boolean;
 		loadingIcon?: IconComponent;
+		loadingIconPosition?: 'start' | 'end';
 	};
 
-	export type ButtonBaseAnchorElement = Omit<HTMLAnchorAttributes, 'href'> & {
+	export type ButtonBaseAnchorElement = Omit<
+		HTMLAnchorAttributes,
+		'href' | 'color'
+	> & {
 		href: string;
 		type?: never;
 		disabled?: never;
@@ -174,6 +187,7 @@
 		value?: never;
 		isLoading?: never;
 		loadingIcon?: never;
+		loadingIconPosition?: never;
 	};
 
 	export type ButtonBaseProps = ButtonBaseWithoutHTML &
@@ -188,6 +202,7 @@
 		variant = 'contained',
 		size = 'md',
 		'loadingIcon': LoadingIcon = LoaderCircle,
+		loadingIconPosition = 'end',
 		href,
 		target,
 		rel = href
@@ -236,8 +251,15 @@
 	{...reactiveProps}
 >
 	{#if isLoading || ariaBusy}
-		{@render children?.()}
+		{#if loadingIconPosition === 'end'}
+			{@render children?.()}
+		{/if}
+
 		<LoadingIcon class="animate-spin" />
+
+		{#if loadingIconPosition === 'start'}
+			{@render children?.()}
+		{/if}
 	{:else}
 		{@render children?.()}
 	{/if}

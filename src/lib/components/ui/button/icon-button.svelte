@@ -24,7 +24,10 @@
 
 	export type IconButtonProps = IconButtonWithoutHTML &
 		(WithAriaHidden | WithoutAriaHidden) &
-		(ButtonBaseButtonElement | ButtonBaseAnchorElement);
+		(
+			| Omit<ButtonBaseButtonElement, 'loadingIconPosition'>
+			| Omit<ButtonBaseAnchorElement, 'loadingIconPosition'>
+		);
 </script>
 
 <script lang="ts">
