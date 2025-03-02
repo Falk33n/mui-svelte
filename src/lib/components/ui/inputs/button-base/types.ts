@@ -45,6 +45,7 @@ export type ButtonBaseWithoutHTML = WithRef<{
 	variant?: ButtonBaseVariant;
 	color?: ButtonBaseColor;
 	size?: ButtonBaseSize;
+	asFloatingAction?: boolean;
 }>;
 
 export type ButtonBaseButtonElement = Omit<HTMLButtonAttributes, 'color'> & {

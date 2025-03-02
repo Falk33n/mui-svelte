@@ -44,7 +44,7 @@
 		href,
 		loadingIconPosition,
 		'aria-hidden': ariaHidden,
-		'aria-busy': isLoading || ariaBusy,
+		'aria-busy': isLoading || ariaBusy || undefined,
 		'class': className ? cn(className) : undefined,
 		...restProps,
 	});

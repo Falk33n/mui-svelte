@@ -164,7 +164,7 @@ const createRippleElement = (
 	ripple.style.left = `${x}px`;
 	ripple.style.top = `${y}px`;
 	ripple.style.background = shadeColor;
-	ripple.classList.add('ripple-animation');
+	ripple.classList.add('ripple');
 	return ripple;
 };
 

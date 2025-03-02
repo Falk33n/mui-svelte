@@ -4,7 +4,7 @@ import type {
 	ButtonBaseWithoutHTML,
 } from '$components/ui/inputs/button-base';
 
-type IconButtonWithoutHTML = Omit<ButtonBaseWithoutHTML, 'size'>;
+type IconButtonWithoutHTML = ButtonBaseWithoutHTML;
 
 type WithAriaHidden = {
 	'aria-hidden': true;

@@ -23,6 +23,7 @@
 		size = 'md',
 		'loadingIcon': LoadingIcon = LoaderCircle,
 		loadingIconPosition = 'end',
+		asFloatingAction = false,
 		href,
 		target,
 		rel = href
@@ -71,6 +72,19 @@
 		),
 		...restProps,
 	});
+
+	if (asFloatingAction) {
+		$effect(() => {
+			if (!ref) return;
+			ref.classList.add('pop-in', 'floating-action');
+
+			return () => {
+				if (!ref) return;
+				ref.classList.remove('pop-in');
+				ref.classList.add('pop-out');
+			};
+		});
+	}
 </script>
 
 <svelte:element
@@ -92,7 +106,7 @@
 </svelte:element>
 
 <style>
-	:global(.ripple-animation) {
+	:global(.ripple) {
 		position: absolute;
 		border-radius: 50%;
 		transform: scale(0);
@@ -100,9 +114,43 @@
 		pointer-events: none;
 	}
 
+	.floating-action {
+		z-index: 9999;
+	}
+
+	.pop-in {
+		animation: pop-in 0.2s ease-out forwards;
+	}
+
+	.pop-out {
+		animation: pop-out 0.2s ease-in forwards;
+	}
+
 	@keyframes ripple {
 		to {
 			transform: scale(4);
+			opacity: 0;
+		}
+	}
+
+	@keyframes pop-in {
+		from {
+			transform: scale(0);
+			opacity: 0;
+		}
+		to {
+			transform: scale(1);
+			opacity: 1;
+		}
+	}
+
+	@keyframes pop-out {
+		from {
+			transform: scale(1);
+			opacity: 1;
+		}
+		to {
+			transform: scale(0);
 			opacity: 0;
 		}
 	}
