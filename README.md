@@ -1,4 +1,6 @@
-### MUICN-Svelte is still under development, this library is not yet meant to be used in production ready applications.
+### ⚠️ MUICN-Svelte is still under development! ⚠️
+
+**This library is _not yet_ meant to be used in production-ready applications.**
 
 # MUICN-Svelte – A Fusion of MUI & ShadCN for Svelte
 
