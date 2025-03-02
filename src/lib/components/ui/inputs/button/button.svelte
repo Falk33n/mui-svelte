@@ -2,36 +2,21 @@
 	lang="ts"
 	module
 >
-	import {
-		ButtonBase,
-		type ButtonBaseAnchorElement,
-		type ButtonBaseButtonElement,
-		type ButtonBaseWithoutHTML,
-	} from '$components/ui/button';
-	import type { IconComponent } from '$components/ui/icons';
+	import type { ButtonProps } from '$components/ui/inputs/button';
+	import { ButtonBase } from '$components/ui/inputs/button-base';
+	import { getButtonGroupContext } from '$components/ui/inputs/button-group';
 	import { cn } from '$utils';
-
-	type ButtonWithoutHTML = ButtonBaseWithoutHTML & {
-		startIcon?: IconComponent;
-		endIcon?: IconComponent;
-	};
-
-	type ButtonElement = ButtonBaseButtonElement & {
-		loadingText?: string;
-	};
-
-	type AnchorElement = ButtonBaseAnchorElement & {
-		loadingText?: never;
-	};
-
-	export type ButtonProps = ButtonWithoutHTML & (ButtonElement | AnchorElement);
 </script>
 
 <script lang="ts">
 	let {
 		ref = $bindable(null),
 		'class': className,
+		variant = 'contained',
+		color = 'primary',
+		size = 'md',
 		href,
+		loadingIconPosition = 'end',
 		isLoading = $bindable(href === undefined ? false : undefined),
 		'aria-hidden': ariaHidden,
 		'aria-busy': ariaBusy = href === undefined && !ariaHidden
@@ -44,8 +29,20 @@
 		...restProps
 	}: ButtonProps = $props();
 
+	const groupContext = getButtonGroupContext();
+
+	if (groupContext) {
+		variant = groupContext.variant;
+		color = groupContext.color;
+		size = groupContext.size;
+	}
+
 	const reactiveProps = $derived({
+		variant,
+		color,
+		size,
 		href,
+		loadingIconPosition,
 		'aria-hidden': ariaHidden,
 		'aria-busy': isLoading || ariaBusy,
 		'class': className ? cn(className) : undefined,
@@ -64,21 +61,17 @@
 	bind:isLoading
 	{...reactiveProps as any}
 >
-	{#if isLoading || ariaBusy}
-		{#if loadingText}
-			{loadingText}
-		{:else}
-			{@render children?.()}
-		{/if}
+	{#if StartIcon && (isLoading || ariaBusy) && loadingIconPosition !== 'start'}
+		<StartIcon />
+	{/if}
+
+	{#if loadingText}
+		{loadingText}
 	{:else}
-		{#if StartIcon}
-			<StartIcon />
-		{/if}
-
 		{@render children?.()}
+	{/if}
 
-		{#if EndIcon}
-			<EndIcon />
-		{/if}
+	{#if EndIcon && (isLoading || ariaBusy) && loadingIconPosition !== 'end'}
+		<EndIcon />
 	{/if}
 </ButtonBase>
