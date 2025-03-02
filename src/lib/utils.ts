@@ -25,3 +25,7 @@ export const createPortal = (
 export const getUniqueId = (length: number = 5) => {
 	return crypto.randomUUID().replace(/-/g, '').substring(0, length);
 };
+
+export const hslToHsla = (hsl: string, alpha: number) => {
+	return hsl.replace('hsl', 'hsla').replace(')', `, ${alpha})`);
+};

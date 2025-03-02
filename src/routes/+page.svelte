@@ -1,25 +1,20 @@
 <script lang="ts">
-	import { Button, IconButton } from '$components/ui/button';
-	import { LoaderCircle } from '$components/ui/icons';
+	import { LoaderCircle } from '$components/ui/data-display/icons';
+	import { Button } from '$components/ui/inputs/button';
+	import { ButtonGroup } from '$components/ui/inputs/button-group';
 </script>
 
 <div class="mb-20 w-full">d</div>
-<div class="flex items-center gap-2">
-	<Button
-		size="sm"
-		startIcon={LoaderCircle}>Hello</Button
+<div class="ml-12 flex items-center gap-2">
+	<ButtonGroup
+		aria-label="helo"
+		variant="outlined"
 	>
-
-	<Button
-		size="md"
-		startIcon={LoaderCircle}
-		endIcon={LoaderCircle}>Hello</Button
-	>
-
-	<Button
-		size="lg"
-		startIcon={LoaderCircle}>Hello</Button
-	>
-
-	<IconButton aria-label="Loading"><LoaderCircle /></IconButton>
+		<Button startIcon={LoaderCircle}>Hello</Button>
+		<Button
+			startIcon={LoaderCircle}
+			endIcon={LoaderCircle}>Hellssssssssssssssssso</Button
+		>
+		<Button startIcon={LoaderCircle}>Hello</Button>
+	</ButtonGroup>
 </div>

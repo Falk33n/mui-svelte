@@ -2,32 +2,9 @@
 	lang="ts"
 	module
 >
-	import {
-		ButtonBase,
-		type ButtonBaseAnchorElement,
-		type ButtonBaseButtonElement,
-		type ButtonBaseWithoutHTML,
-	} from '$components/ui/button';
+	import { ButtonBase } from '$components/ui/inputs/button-base';
+	import type { IconButtonProps } from '$components/ui/inputs/icon-button';
 	import { cn } from '$utils';
-
-	type IconButtonWithoutHTML = Omit<ButtonBaseWithoutHTML, 'size'>;
-
-	type WithAriaHidden = {
-		'aria-hidden': true;
-		'aria-label'?: never;
-	};
-
-	type WithoutAriaHidden = {
-		'aria-label': string;
-		'aria-hidden'?: false;
-	};
-
-	export type IconButtonProps = IconButtonWithoutHTML &
-		(WithAriaHidden | WithoutAriaHidden) &
-		(
-			| Omit<ButtonBaseButtonElement, 'loadingIconPosition'>
-			| Omit<ButtonBaseAnchorElement, 'loadingIconPosition'>
-		);
 </script>
 
 <script lang="ts">

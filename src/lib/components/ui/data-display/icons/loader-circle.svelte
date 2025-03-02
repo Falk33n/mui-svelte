@@ -2,7 +2,7 @@
 	lang="ts"
 	module
 >
-	import type { IconProps } from '$components/ui/icons';
+	import type { IconProps } from '$components/ui/data-display/icons';
 	import { cn } from '$utils';
 </script>
 
