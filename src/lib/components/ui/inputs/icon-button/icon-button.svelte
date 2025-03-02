@@ -11,6 +11,7 @@
 	let {
 		ref = $bindable(null),
 		'class': className,
+		size = 'md',
 		href,
 		isLoading = $bindable(href === undefined ? false : undefined),
 		'aria-hidden': ariaHidden,
@@ -24,8 +25,12 @@
 	const reactiveProps = $derived({
 		href,
 		'aria-hidden': ariaHidden,
-		'aria-busy': isLoading || ariaBusy,
-		'class': cn('size-10 p-0 rounded-full', className),
+		'aria-busy': isLoading || ariaBusy || undefined,
+		'class': cn(
+			'p-0 rounded-full',
+			size === 'sm' ? 'size-8' : size === 'md' ? 'size-10' : 'size-12',
+			className,
+		),
 		...restProps,
 	});
 </script>

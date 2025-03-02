@@ -18,3 +18,7 @@
 		<Button startIcon={LoaderCircle}>Hello</Button>
 	</ButtonGroup>
 </div>
+<Button
+	startIcon={LoaderCircle}
+	asFloatingAction>Hello</Button
+>
