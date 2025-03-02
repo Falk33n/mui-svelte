@@ -27,7 +27,7 @@
 		'aria-hidden': ariaHidden,
 		'aria-busy': isLoading || ariaBusy || undefined,
 		'class': cn(
-			'p-0 rounded-full',
+			'px-[unset] rounded-full',
 			size === 'sm' ? 'size-8' : size === 'md' ? 'size-10' : 'size-12',
 			className,
 		),
