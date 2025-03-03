@@ -9,7 +9,7 @@
 		type ButtonBaseFocusEvent,
 		type ButtonBaseMouseEvent,
 		type ButtonBaseProps,
-	} from '$components/ui/inputs/button-base';
+	} from '$components/ui/inputs/button/base';
 	import { cn } from '$utils';
 </script>
 

@@ -2,7 +2,7 @@ import type {
 	ButtonBaseAnchorElement,
 	ButtonBaseButtonElement,
 	ButtonBaseWithoutHTML,
-} from '$components/ui/inputs/button-base';
+} from '$components/ui/inputs/button/base';
 
 type IconButtonWithoutHTML = ButtonBaseWithoutHTML;
 

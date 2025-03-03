@@ -1,4 +1,4 @@
-import type { buttonGroupVariants } from '$components/ui/inputs/button-group';
+import type { buttonGroupVariants } from '$components/ui/inputs/button/group';
 import type { WithRef } from '$types';
 import type { HTMLAttributes } from 'svelte/elements';
 import type { VariantProps } from 'tailwind-variants';
@@ -29,6 +29,9 @@ export type ButtonGroupContextProps = Required<
 >;
 
 export type ButtonGroupProps = ButtonGroupWithoutHTML &
-	Omit<HTMLAttributes<HTMLDivElement>, 'aria-label'> & {
+	Omit<
+		HTMLAttributes<HTMLDivElement>,
+		'aria-label' | 'role' | 'aria-orientation'
+	> & {
 		'aria-label': string;
 	};

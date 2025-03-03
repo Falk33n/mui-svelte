@@ -2,8 +2,8 @@
 	lang="ts"
 	module
 >
-	import { ButtonBase } from '$components/ui/inputs/button-base';
-	import type { IconButtonProps } from '$components/ui/inputs/icon-button';
+	import { ButtonBase } from '$components/ui/inputs/button/base';
+	import type { IconButtonProps } from '$components/ui/inputs/button/icon';
 	import { cn } from '$utils';
 </script>
 
@@ -28,7 +28,11 @@
 		'aria-busy': isLoading || ariaBusy || undefined,
 		'class': cn(
 			'px-[unset] rounded-full',
-			size === 'sm' ? 'size-8' : size === 'md' ? 'size-10' : 'size-12',
+			size === 'sm'
+				? 'size-8 [&>svg]:size-5'
+				: size === 'md'
+					? 'size-10 [&>svg]:size-6'
+					: 'size-12 [&>svg]:size-7',
 			className,
 		),
 		...restProps,

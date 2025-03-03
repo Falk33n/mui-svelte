@@ -6,20 +6,18 @@
 		buttonGroupVariants,
 		setButtonGroupContext,
 		type ButtonGroupProps,
-	} from '$components/ui/inputs/button-group';
+	} from '$components/ui/inputs/button/group';
 	import { cn } from '$utils';
 </script>
 
 <script lang="ts">
 	let {
 		ref = $bindable(null),
-		'class': className,
+		class: className,
 		variant = 'contained',
 		color = 'primary',
 		size = 'md',
 		orientation = 'horizontal',
-		role = 'group',
-		'aria-orientation': ariaOrientation,
 		children,
 		...restProps
 	}: ButtonGroupProps = $props();
@@ -27,7 +25,7 @@
 	setButtonGroupContext({ variant, color, size });
 
 	const reactiveProps = $derived({
-		role,
+		'role': 'group',
 		'class': cn(
 			buttonGroupVariants({
 				variant,
@@ -37,8 +35,7 @@
 			}),
 			className,
 		),
-		'aria-orientation':
-			orientation === 'vertical' ? orientation : ariaOrientation,
+		'aria-orientation': orientation === 'vertical' ? orientation : undefined,
 		...restProps,
 	});
 </script>
