@@ -2,12 +2,35 @@
 	lang="ts"
 	module
 >
-	import { ButtonBase } from '$components/ui/inputs/button/base';
-	import type { IconButtonProps } from '$components/ui/inputs/button/icon';
-	import { cn } from '$utils';
+	type WithoutHTML = ButtonBaseWithoutHTML;
+
+	type WithAriaHidden = {
+		'aria-hidden': true;
+		'aria-label'?: never;
+	};
+
+	type WithoutAriaHidden = {
+		'aria-label': string;
+		'aria-hidden'?: false;
+	};
+
+	export type IconButtonProps = WithoutHTML &
+		(WithAriaHidden | WithoutAriaHidden) &
+		(
+			| Omit<ButtonBaseButtonElement, 'loadingIconPosition'>
+			| Omit<ButtonBaseAnchorElement, 'loadingIconPosition'>
+		);
 </script>
 
 <script lang="ts">
+	import {
+		ButtonBase,
+		type ButtonBaseAnchorElement,
+		type ButtonBaseButtonElement,
+		type ButtonBaseWithoutHTML,
+	} from '$components/ui/inputs/button/base';
+	import { cn } from '$utils';
+
 	let {
 		ref = $bindable(null),
 		'class': className,
@@ -15,32 +38,13 @@
 		href,
 		isLoading = $bindable(href === undefined ? false : undefined),
 		'aria-hidden': ariaHidden,
-		'aria-busy': ariaBusy = href === undefined && !ariaHidden
-			? isLoading
-			: undefined,
 		children,
 		...restProps
 	}: IconButtonProps = $props();
-
-	const reactiveProps = $derived({
-		href,
-		'aria-hidden': ariaHidden,
-		'aria-busy': isLoading || ariaBusy || undefined,
-		'class': cn(
-			'px-[unset] rounded-full',
-			size === 'sm'
-				? 'size-8 [&>svg]:size-5'
-				: size === 'md'
-					? 'size-10 [&>svg]:size-6'
-					: 'size-12 [&>svg]:size-7',
-			className,
-		),
-		...restProps,
-	});
 </script>
 
 <!-- 
-  The `as any` on the `reactiveProps` spread fixes the following error... 
+  The `as any` on the `restProps` spread fixes the following error... 
     "Expression produces a union type that is too complex to represent (TS2590)".  
   TypeScript cannot compute the full union type, so we use 
     `as any` to bypass the limitation.  
@@ -48,9 +52,21 @@
 <ButtonBase
 	bind:ref
 	bind:isLoading
-	{...reactiveProps as any}
+	aria-hidden={ariaHidden}
+	aria-busy={href === undefined && !ariaHidden ? isLoading : undefined}
+	class={cn(
+		'rounded-full px-[unset]',
+		size === 'sm'
+			? 'size-8 [&>svg]:size-5'
+			: size === 'md'
+				? 'size-10 [&>svg]:size-6'
+				: 'size-12 [&>svg]:size-7',
+		className,
+	)}
+	{href}
+	{...restProps as any}
 >
-	{#if !isLoading && !ariaBusy}
+	{#if !isLoading}
 		{@render children?.()}
 	{/if}
 </ButtonBase>

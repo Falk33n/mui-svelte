@@ -2,15 +2,50 @@
 	lang="ts"
 	module
 >
-	import {
-		setToggleButtonGroupContext,
-		toggleButtonGroupVariants,
-		type ToggleButtonGroupProps,
-	} from '$components/ui/inputs/button/toggle/group';
-	import { cn } from '$utils';
+	type WithoutHTML = WithRef<{
+		color?: ToggleButtonGroupColor;
+		size?: ToggleButtonGroupSize;
+		orientation?: ToggleButtonGroupOrientation;
+		exclusiveSelection?: boolean;
+		enforcedSelection?: boolean;
+	}>;
+
+	type ContextProps = Required<Omit<WithoutHTML, 'ref' | 'orientation'>> & {
+		selectedButton: { refs: (HTMLElement | null)[] };
+	};
+
+	export type ToggleButtonGroupProps = WithoutHTML &
+		Omit<
+			HTMLAttributes<HTMLDivElement>,
+			'aria-label' | 'role' | 'aria-orientation'
+		> & {
+			'aria-label': string;
+		};
+
+	const CONTEXT_NAME = 'toggle-button-group';
+
+	export const getToggleButtonGroupContext = () => {
+		if (!hasContext(CONTEXT_NAME)) return;
+		return getContext<ContextProps>(CONTEXT_NAME);
+	};
+
+	const createContext = (props: ContextProps) => {
+		return setContext<ContextProps>(CONTEXT_NAME, props);
+	};
 </script>
 
 <script lang="ts">
+	import {
+		toggleButtonGroupVariants,
+		type ToggleButtonGroupColor,
+		type ToggleButtonGroupOrientation,
+		type ToggleButtonGroupSize,
+	} from '$components/ui/inputs/button/toggle/group';
+	import type { WithRef } from '$types';
+	import { cn } from '$utils';
+	import { getContext, hasContext, setContext } from 'svelte';
+	import type { HTMLAttributes } from 'svelte/elements';
+
 	let {
 		ref = $bindable(null),
 		class: className,
@@ -25,32 +60,27 @@
 
 	let selectedButton = $state<{ refs: (HTMLElement | null)[] }>({ refs: [] });
 
-	setToggleButtonGroupContext({
+	createContext({
 		color,
 		size,
 		exclusiveSelection,
 		enforcedSelection,
 		selectedButton,
 	});
-
-	const reactiveProps = $derived({
-		'aria-orientation': orientation === 'vertical' ? orientation : undefined,
-		'role': 'group',
-		'class': cn(
-			toggleButtonGroupVariants({
-				color,
-				size,
-				orientation,
-			}),
-			className,
-		),
-		...restProps,
-	});
 </script>
 
 <div
 	bind:this={ref}
-	{...reactiveProps}
+	role="group"
+	class={cn(
+		toggleButtonGroupVariants({
+			color,
+			size,
+			orientation,
+		}),
+		className,
+	)}
+	{...restProps}
 >
 	{@render children?.()}
 </div>

@@ -2,18 +2,37 @@
 	lang="ts"
 	module
 >
+	type WithoutHTML = WithRef<{
+		color?: ToggleButtonColor;
+		size?: ToggleButtonSize;
+	}>;
+
+	type WithHTML = Omit<
+		HTMLButtonAttributes,
+		'aria-label' | 'aria-pressed' | 'value'
+	> & {
+		'aria-label': string;
+		'value': string;
+		'defaultPressed'?: boolean;
+		'aria-pressed'?: boolean;
+	};
+
+	export type ToggleButtonProps = WithoutHTML & WithHTML;
+</script>
+
+<script lang="ts">
 	import { ButtonBase } from '$components/ui/inputs/button/base';
 	import {
 		handleToggleButtonPressed,
 		toggleButtonVariants,
-		type ToggleButtonProps,
+		type ToggleButtonColor,
+		type ToggleButtonSize,
 	} from '$components/ui/inputs/button/toggle';
 	import { getToggleButtonGroupContext } from '$components/ui/inputs/button/toggle/group';
-	import type { ButtonMouseEvent } from '$types';
+	import type { ButtonMouseEvent, WithRef } from '$types';
 	import { cn } from '$utils';
-</script>
+	import type { HTMLButtonAttributes } from 'svelte/elements';
 
-<script lang="ts">
 	let {
 		ref = $bindable(null),
 		'class': className,
