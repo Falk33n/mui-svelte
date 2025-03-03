@@ -3,8 +3,8 @@
 	module
 >
 	import type { ButtonProps } from '$components/ui/inputs/button';
-	import { ButtonBase } from '$components/ui/inputs/button-base';
-	import { getButtonGroupContext } from '$components/ui/inputs/button-group';
+	import { ButtonBase } from '$components/ui/inputs/button/base';
+	import { getButtonGroupContext } from '$components/ui/inputs/button/group';
 	import { cn } from '$utils';
 </script>
 

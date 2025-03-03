@@ -1,4 +1,5 @@
 import type { Snippet } from 'svelte';
+import type { MouseEventHandler } from 'svelte/elements';
 
 export type WithoutRef<T> = Omit<T, 'ref'>;
 export type WithRef<T, TRef = HTMLElement> = T & {
@@ -20,3 +21,12 @@ export type WithChildrenAndChild<T> = {
 };
 
 export type HeadingLevel = 'h1' | 'h2' | 'h3' | 'h4' | 'h5' | 'h6';
+
+export type ButtonMouseEvent = MouseEvent & {
+	currentTarget: EventTarget & HTMLButtonElement;
+};
+
+export type ButtonMouseEventHandler =
+	| MouseEventHandler<HTMLButtonElement>
+	| null
+	| undefined;

@@ -5,7 +5,7 @@ import type {
 	ButtonBaseVariant,
 	RippleEvent,
 	RippleShadeVariant,
-} from '$components/ui/inputs/button-base';
+} from '$components/ui/inputs/button/base';
 import { hslToHsla } from '$utils';
 import { tv } from 'tailwind-variants';
 

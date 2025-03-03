@@ -1,5 +1,5 @@
 import type { IconComponent } from '$components/ui/data-display/icons';
-import type { buttonBaseVariants } from '$components/ui/inputs/button-base';
+import type { buttonBaseVariants } from '$components/ui/inputs/button/base';
 import type { WithRef } from '$types';
 import type {
 	FocusEventHandler,

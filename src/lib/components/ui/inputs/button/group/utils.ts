@@ -1,4 +1,4 @@
-import type { ButtonGroupContextProps } from '$components/ui/inputs/button-group';
+import type { ButtonGroupContextProps } from '$components/ui/inputs/button/group';
 import { getContext, hasContext, setContext } from 'svelte';
 import { tv } from 'tailwind-variants';
 
@@ -22,9 +22,9 @@ export const buttonGroupVariants = tv({
 		},
 		orientation: {
 			horizontal:
-				'[&>*]:first:rounded-l-md [&>*]:last:rounded-r-md [&>*]:border-x [&>*]:first:border-x-0 [&>*]:last:border-x-0',
+				'[&>*]:first:rounded-l-md [&>*]:last:rounded-r-md [&>*]:border-r [&>*]:last:border-r-0',
 			vertical:
-				'flex-col h-[unset] [&>*]:w-full [&>*]:first:rounded-t-md [&>*]:last:rounded-b-md [&>*]:border-y [&>*]:first:border-y-0 [&>*]:last:border-y-0',
+				'flex-col h-[unset] [&>*]:w-full [&>*]:first:rounded-t-md [&>*]:last:rounded-b-md [&>*]:border-b [&>*]:last:border-b-0',
 		},
 	},
 	compoundVariants: [
@@ -46,7 +46,12 @@ export const buttonGroupVariants = tv({
 		{
 			variant: 'outlined',
 			orientation: 'horizontal',
-			class: 'border-x',
+			class: 'border-x [&>*]:border-l-0',
+		},
+		{
+			variant: 'outlined',
+			orientation: 'vertical',
+			class: 'border-y [&>*]:border-t-0',
 		},
 		{
 			variant: 'outlined',
