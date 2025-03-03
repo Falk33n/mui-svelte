@@ -2,18 +2,31 @@
 	lang="ts"
 	module
 >
-	import { LoaderCircle } from '$components/ui/data-display/icons';
-	import {
-		buttonBaseVariants,
-		handleButtonBaseEvents,
-		type ButtonBaseFocusEvent,
-		type ButtonBaseMouseEvent,
-		type ButtonBaseProps,
-	} from '$components/ui/inputs/button/base';
-	import { cn } from '$utils';
+	type ButtonMouseEvent = MouseEvent & {
+		currentTarget: EventTarget & (HTMLButtonElement | HTMLAnchorElement);
+	};
+
+	type ButtonFocusEvent = FocusEvent & {
+		currentTarget: EventTarget & (HTMLButtonElement | HTMLAnchorElement);
+	};
+
+	type RippleEvent = ButtonMouseEvent | ButtonFocusEvent;
+
+	type RippleShadeVariant =
+		| 'primary'
+		| 'destructive'
+		| 'background'
+		| 'foreground';
 </script>
 
 <script lang="ts">
+	import { LoaderCircle } from '$components/ui/data-display/icons';
+	import {
+		buttonBaseVariants,
+		type ButtonBaseProps,
+	} from '$components/ui/inputs/button/base';
+	import { cn, hslToHsla } from '$utils';
+
 	let {
 		ref = $bindable(null),
 		'class': className,
@@ -39,39 +52,121 @@
 		type = href === undefined ? 'button' : undefined,
 		isLoading = $bindable(href === undefined ? false : undefined),
 		'aria-hidden': ariaHidden,
-		'aria-busy': ariaBusy = href === undefined && !ariaHidden
-			? isLoading
-			: undefined,
-		disabled = href === undefined ? isLoading || ariaBusy === true : undefined,
+		disabled = href === undefined ? isLoading : undefined,
 		onclick,
 		onfocus,
 		children,
 		...restProps
 	}: ButtonBaseProps = $props();
 
-	const reactiveProps = $derived({
-		type,
-		disabled,
-		referrerpolicy,
-		href,
-		target,
-		rel,
-		tabindex,
-		'aria-busy': isLoading || ariaBusy || undefined,
-		'onclick': (e: ButtonBaseMouseEvent) =>
-			handleButtonBaseEvents(e, variant, color, onclick),
-		'onfocus': (e: ButtonBaseFocusEvent) =>
-			handleButtonBaseEvents(e, variant, color, undefined, onfocus),
-		'class': cn(
-			buttonBaseVariants({
-				variant,
-				color,
-				size,
-			}),
-			className,
-		),
-		...restProps,
-	});
+	function createRipple(e: RippleEvent, shadeVariant: RippleShadeVariant) {
+		const rect = e.currentTarget.getBoundingClientRect();
+		const size = Math.max(rect.width, rect.height);
+
+		const getPosition = () => {
+			const rect = e.currentTarget.getBoundingClientRect();
+
+			if (e instanceof MouseEvent) {
+				return {
+					x: e.clientX - rect.left - size / 2,
+					y: e.clientY - rect.top - size / 2,
+				};
+			}
+
+			return {
+				x: rect.width / 2 - size / 2,
+				y: rect.height / 2 - size / 2,
+			};
+		};
+
+		const { x, y } = getPosition();
+
+		const getShadeColor = () => {
+			const backgroundVariable = getComputedStyle(
+				document.documentElement,
+			).getPropertyValue('--color-background');
+			const foregroundVariable = getComputedStyle(
+				document.documentElement,
+			).getPropertyValue('--color-foreground');
+			const primaryVariable = getComputedStyle(
+				document.documentElement,
+			).getPropertyValue('--color-primary');
+			const destructiveVariable = getComputedStyle(
+				document.documentElement,
+			).getPropertyValue('--color-destructive');
+
+			const backgroundShadeColor = hslToHsla(backgroundVariable, 0.45);
+			const foregroundShadeColor = hslToHsla(foregroundVariable, 0.25);
+			const primaryShadeColor = hslToHsla(primaryVariable, 0.25);
+			const destructiveShadeColor = hslToHsla(destructiveVariable, 0.25);
+
+			if (shadeVariant === 'background') return backgroundShadeColor;
+			else if (shadeVariant === 'foreground') return foregroundShadeColor;
+			else if (shadeVariant === 'primary') return primaryShadeColor;
+			else return destructiveShadeColor;
+		};
+
+		const shadeColor = getShadeColor();
+
+		const createElement = () => {
+			const ripple = document.createElement('span');
+			ripple.style.height = `${size}px`;
+			ripple.style.width = `${size}px`;
+			ripple.style.left = `${x}px`;
+			ripple.style.top = `${y}px`;
+			ripple.style.background = shadeColor;
+			ripple.classList.add('ripple');
+			return ripple;
+		};
+
+		const ripple = createElement();
+		e.currentTarget.appendChild(ripple);
+
+		setTimeout(() => ripple.remove(), 600);
+	}
+
+	function getShadeVariant(): RippleShadeVariant {
+		if (color === 'primary') {
+			if (variant === 'contained') return 'background';
+			return 'primary';
+		} else if (color === 'secondary') return 'foreground';
+		if (variant === 'contained') return 'background';
+		return 'destructive';
+	}
+
+	function handleMouseEvent(e: ButtonMouseEvent) {
+		const shadeVariant: RippleShadeVariant = getShadeVariant();
+
+		if (!e.defaultPrevented && variant !== 'link') {
+			createRipple(e, shadeVariant);
+		}
+
+		// The `as any` on the EventHandler props fixes the type union mismatch.
+		// TypeScript cannot compute the full union type, so we use
+		//  `as any` to bypass the limitation.
+		// This should be looked at in the future for a potential fix.
+		//
+		onclick?.(e as any);
+	}
+
+	function handleFocusEvent(e: ButtonFocusEvent) {
+		const shadeVariant: RippleShadeVariant = getShadeVariant();
+
+		if (
+			!e.defaultPrevented &&
+			e.currentTarget.matches(':focus-visible') &&
+			variant !== 'link'
+		) {
+			createRipple(e, shadeVariant);
+		}
+
+		// The `as any` on the EventHandler props fixes the type union mismatch.
+		// TypeScript cannot compute the full union type, so we use
+		//  `as any` to bypass the limitation.
+		// This should be looked at in the future for a potential fix.
+		//
+		onfocus?.(e as any);
+	}
 
 	if (asFloatingAction) {
 		$effect(() => {
@@ -90,13 +185,31 @@
 <svelte:element
 	this={href ? 'a' : 'button'}
 	bind:this={ref}
-	{...reactiveProps}
+	class={cn(
+		buttonBaseVariants({
+			variant,
+			color,
+			size,
+		}),
+		className,
+	)}
+	aria-busy={href === undefined && !ariaHidden ? isLoading : undefined}
+	onclick={handleMouseEvent}
+	onfocus={handleFocusEvent}
+	{type}
+	{disabled}
+	{referrerpolicy}
+	{href}
+	{target}
+	{rel}
+	{tabindex}
+	{...restProps}
 >
 	{#if loadingIconPosition !== 'start'}
 		{@render children?.()}
 	{/if}
 
-	{#if isLoading || ariaBusy}
+	{#if isLoading}
 		<LoadingIcon class="animate-spin" />
 	{/if}
 
