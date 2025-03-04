@@ -2,6 +2,17 @@
 	lang="ts"
 	module
 >
+	import {
+		toggleButtonGroupVariants,
+		type ToggleButtonGroupColor,
+		type ToggleButtonGroupOrientation,
+		type ToggleButtonGroupSize,
+	} from '$components/ui/inputs/button/toggle/group';
+	import type { WithRef } from '$types';
+	import { cn } from '$utils';
+	import { getContext, hasContext, setContext } from 'svelte';
+	import type { HTMLAttributes } from 'svelte/elements';
+
 	type WithoutHTML = WithRef<{
 		color?: ToggleButtonGroupColor;
 		size?: ToggleButtonGroupSize;
@@ -24,28 +35,17 @@
 
 	const CONTEXT_NAME = 'toggle-button-group';
 
-	export const getToggleButtonGroupContext = () => {
+	export function getToggleButtonGroupContext() {
 		if (!hasContext(CONTEXT_NAME)) return;
 		return getContext<ContextProps>(CONTEXT_NAME);
-	};
+	}
 
-	const createContext = (props: ContextProps) => {
+	function createContext(props: ContextProps) {
 		return setContext<ContextProps>(CONTEXT_NAME, props);
-	};
+	}
 </script>
 
 <script lang="ts">
-	import {
-		toggleButtonGroupVariants,
-		type ToggleButtonGroupColor,
-		type ToggleButtonGroupOrientation,
-		type ToggleButtonGroupSize,
-	} from '$components/ui/inputs/button/toggle/group';
-	import type { WithRef } from '$types';
-	import { cn } from '$utils';
-	import { getContext, hasContext, setContext } from 'svelte';
-	import type { HTMLAttributes } from 'svelte/elements';
-
 	let {
 		ref = $bindable(null),
 		class: className,

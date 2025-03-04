@@ -2,6 +2,13 @@
 	lang="ts"
 	module
 >
+	import { LoaderCircle } from '$components/ui/data-display/icons';
+	import {
+		buttonBaseVariants,
+		type ButtonBaseProps,
+	} from '$components/ui/inputs/button/base';
+	import { cn, hslToHsla } from '$utils';
+
 	type ButtonMouseEvent = MouseEvent & {
 		currentTarget: EventTarget & (HTMLButtonElement | HTMLAnchorElement);
 	};
@@ -20,13 +27,6 @@
 </script>
 
 <script lang="ts">
-	import { LoaderCircle } from '$components/ui/data-display/icons';
-	import {
-		buttonBaseVariants,
-		type ButtonBaseProps,
-	} from '$components/ui/inputs/button/base';
-	import { cn, hslToHsla } from '$utils';
-
 	let {
 		ref = $bindable(null),
 		'class': className,
@@ -103,7 +103,7 @@
 			if (shadeVariant === 'background') return backgroundShadeColor;
 			else if (shadeVariant === 'foreground') return foregroundShadeColor;
 			else if (shadeVariant === 'primary') return primaryShadeColor;
-			else return destructiveShadeColor;
+			return destructiveShadeColor;
 		};
 
 		const shadeColor = getShadeColor();
@@ -141,11 +141,7 @@
 			createRipple(e, shadeVariant);
 		}
 
-		// The `as any` on the EventHandler props fixes the type union mismatch.
-		// TypeScript cannot compute the full union type, so we use
-		//  `as any` to bypass the limitation.
-		// This should be looked at in the future for a potential fix.
-		//
+		// Too complex uninion type
 		onclick?.(e as any);
 	}
 
@@ -160,23 +156,17 @@
 			createRipple(e, shadeVariant);
 		}
 
-		// The `as any` on the EventHandler props fixes the type union mismatch.
-		// TypeScript cannot compute the full union type, so we use
-		//  `as any` to bypass the limitation.
-		// This should be looked at in the future for a potential fix.
-		//
+		// Too complex uninion type
 		onfocus?.(e as any);
 	}
 
 	if (asFloatingAction) {
 		$effect(() => {
-			if (!ref) return;
-			ref.classList.add('pop-in', 'floating-action');
+			ref?.classList.add('pop-in', 'floating-action');
 
 			return () => {
-				if (!ref) return;
-				ref.classList.remove('pop-in');
-				ref.classList.add('pop-out');
+				ref?.classList.remove('pop-in');
+				ref?.classList.add('pop-out');
 			};
 		});
 	}
