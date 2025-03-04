@@ -2,6 +2,17 @@
 	lang="ts"
 	module
 >
+	import { ButtonBase } from '$components/ui/inputs/button/base';
+	import {
+		toggleButtonVariants,
+		type ToggleButtonColor,
+		type ToggleButtonSize,
+	} from '$components/ui/inputs/button/toggle';
+	import { getToggleButtonGroupContext } from '$components/ui/inputs/button/toggle/group';
+	import type { ButtonMouseEvent, WithRef } from '$types';
+	import { cn } from '$utils';
+	import type { HTMLButtonAttributes } from 'svelte/elements';
+
 	type WithoutHTML = WithRef<{
 		color?: ToggleButtonColor;
 		size?: ToggleButtonSize;
@@ -13,33 +24,19 @@
 	> & {
 		'aria-label': string;
 		'value': string;
-		'defaultPressed'?: boolean;
-		'aria-pressed'?: boolean;
+		'defaultSelected'?: boolean;
 	};
 
 	export type ToggleButtonProps = WithoutHTML & WithHTML;
 </script>
 
 <script lang="ts">
-	import { ButtonBase } from '$components/ui/inputs/button/base';
-	import {
-		handleToggleButtonPressed,
-		toggleButtonVariants,
-		type ToggleButtonColor,
-		type ToggleButtonSize,
-	} from '$components/ui/inputs/button/toggle';
-	import { getToggleButtonGroupContext } from '$components/ui/inputs/button/toggle/group';
-	import type { ButtonMouseEvent, WithRef } from '$types';
-	import { cn } from '$utils';
-	import type { HTMLButtonAttributes } from 'svelte/elements';
-
 	let {
 		ref = $bindable(null),
-		'class': className,
+		class: className,
 		size = 'md',
 		color = 'primary',
-		defaultPressed = false,
-		'aria-pressed': ariaPressed,
+		defaultSelected = false,
 		children,
 		onclick,
 		...restProps
@@ -52,41 +49,79 @@
 		size = groupContext.size;
 	}
 
-	let isSelected = $state({ value: defaultPressed });
+	let isSelected = $state({ value: defaultSelected });
 
-	const reactiveProps = $derived({
-		'class': cn(toggleButtonVariants({ size, color }), className),
-		'aria-pressed': isSelected.value || ariaPressed || false,
-		'onclick': (e: ButtonMouseEvent) =>
-			handleToggleButtonPressed(
-				e,
-				ref,
-				isSelected,
-				onclick,
-				groupContext?.selectedButton,
-				groupContext?.exclusiveSelection,
-				groupContext?.enforcedSelection,
-			),
-		...restProps,
-	});
+	function handleMouseEvent(e: ButtonMouseEvent) {
+		if (!e.defaultPrevented) {
+			if (groupContext) {
+				const { enforcedSelection, exclusiveSelection, selectedButton } =
+					groupContext;
+
+				if (exclusiveSelection) {
+					const handleExclusiveSelection = () => {
+						if (
+							enforcedSelection &&
+							selectedButton.refs.includes(ref) &&
+							selectedButton.refs.length === 1
+						) {
+							onclick?.(e);
+							return { escapeEarly: true };
+						}
+
+						if (!selectedButton.refs.includes(ref)) selectedButton.refs = [ref];
+						else if (!enforcedSelection || selectedButton.refs.length > 1) {
+							selectedButton.refs = [];
+						}
+					};
+
+					if (handleExclusiveSelection()?.escapeEarly) return;
+				} else {
+					const handleNormalSelection = () => {
+						if (
+							enforcedSelection &&
+							isSelected.value &&
+							selectedButton.refs.includes(ref) &&
+							selectedButton.refs.length === 1
+						) {
+							onclick?.(e);
+							return { escapeEarly: true };
+						}
+
+						if (isSelected.value) {
+							selectedButton.refs.splice(selectedButton.refs.indexOf(ref), 1);
+						} else selectedButton.refs.push(ref);
+					};
+
+					if (handleNormalSelection()?.escapeEarly) return;
+				}
+
+				onclick?.(e);
+				return;
+			}
+
+			isSelected.value = !isSelected.value;
+		}
+
+		onclick?.(e);
+	}
 
 	if (
 		groupContext &&
-		(groupContext.exclusiveSelection || groupContext.enforcedSelection)
+		(groupContext.enforcedSelection || groupContext.exclusiveSelection)
 	) {
 		$effect(() => {
-			if (groupContext.selectedButton.refs.length === 0 && isSelected.value) {
-				groupContext.selectedButton.refs.push(ref);
-			}
-
-			isSelected.value = groupContext.selectedButton.refs.includes(ref);
+			isSelected.value =
+				groupContext.selectedButton.refs.includes(ref) || false;
 		});
 	}
 </script>
 
 <ButtonBase
 	bind:ref
-	{...reactiveProps}
+	class={cn(toggleButtonVariants({ size, color }), className)}
+	aria-pressed={isSelected.value}
+	onclick={handleMouseEvent}
+	{...restProps}
 >
 	{@render children?.()}
 </ButtonBase>

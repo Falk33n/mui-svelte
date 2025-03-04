@@ -2,6 +2,18 @@
 	lang="ts"
 	module
 >
+	import {
+		buttonGroupVariants,
+		type ButtonGroupColor,
+		type ButtonGroupOrientation,
+		type ButtonGroupSize,
+		type ButtonGroupVariant,
+	} from '$components/ui/inputs/button/group';
+	import type { WithRef } from '$types';
+	import { cn } from '$utils';
+	import { getContext, hasContext, setContext } from 'svelte';
+	import type { HTMLAttributes } from 'svelte/elements';
+
 	type WithoutHTML = WithRef<{
 		variant?: ButtonGroupVariant;
 		color?: ButtonGroupColor;
@@ -21,10 +33,10 @@
 
 	const CONTEXT_NAME = 'button-group';
 
-	export const getButtonGroupContext = () => {
+	export function getButtonGroupContext() {
 		if (!hasContext(CONTEXT_NAME)) return;
 		return getContext<ContextProps>(CONTEXT_NAME);
-	};
+	}
 
 	function createContext(props: ContextProps) {
 		return setContext<ContextProps>(CONTEXT_NAME, props);
@@ -32,18 +44,6 @@
 </script>
 
 <script lang="ts">
-	import {
-		buttonGroupVariants,
-		type ButtonGroupColor,
-		type ButtonGroupOrientation,
-		type ButtonGroupSize,
-		type ButtonGroupVariant,
-	} from '$components/ui/inputs/button/group';
-	import type { WithRef } from '$types';
-	import { cn } from '$utils';
-	import { getContext, hasContext, setContext } from 'svelte';
-	import type { HTMLAttributes } from 'svelte/elements';
-
 	let {
 		ref = $bindable(null),
 		class: className,

@@ -6,7 +6,11 @@
 
 <div class="mb-20 w-full">d</div>
 <div class="ml-12 flex items-center gap-2">
-	<ToggleButtonGroup aria-label="helo">
+	<ToggleButtonGroup
+		enforcedSelection
+		exclusiveSelection
+		aria-label="helo"
+	>
 		<ToggleButton
 			aria-label="hello"
 			value="loading-1"><LoaderCircle /></ToggleButton

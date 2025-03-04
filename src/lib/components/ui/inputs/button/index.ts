@@ -1,2 +1,4 @@
-export { default as Button } from './button.svelte';
-export type { ButtonProps } from './types';
+export {
+	default as Button,
+	type ButtonProps,
+} from '$components/ui/inputs/button/button.svelte';

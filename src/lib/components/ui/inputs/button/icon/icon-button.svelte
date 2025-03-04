@@ -2,7 +2,21 @@
 	lang="ts"
 	module
 >
-	type WithoutHTML = ButtonBaseWithoutHTML;
+	import {
+		ButtonBase,
+		type ButtonBaseAnchorElement,
+		type ButtonBaseButtonElement,
+		type ButtonBaseWithoutHTML,
+	} from '$components/ui/inputs/button/base';
+	import {
+		iconButtonVariants,
+		type IconButtonSize,
+	} from '$components/ui/inputs/button/icon';
+	import { cn } from '$utils';
+
+	type WithoutHTML = Omit<ButtonBaseWithoutHTML, 'size'> & {
+		size?: IconButtonSize;
+	};
 
 	type WithAriaHidden = {
 		'aria-hidden': true;
@@ -23,14 +37,6 @@
 </script>
 
 <script lang="ts">
-	import {
-		ButtonBase,
-		type ButtonBaseAnchorElement,
-		type ButtonBaseButtonElement,
-		type ButtonBaseWithoutHTML,
-	} from '$components/ui/inputs/button/base';
-	import { cn } from '$utils';
-
 	let {
 		ref = $bindable(null),
 		'class': className,
@@ -43,26 +49,13 @@
 	}: IconButtonProps = $props();
 </script>
 
-<!-- 
-  The `as any` on the `restProps` spread fixes the following error... 
-    "Expression produces a union type that is too complex to represent (TS2590)".  
-  TypeScript cannot compute the full union type, so we use 
-    `as any` to bypass the limitation.  
--->
+<!-- Too complex uninion type -->
 <ButtonBase
 	bind:ref
 	bind:isLoading
 	aria-hidden={ariaHidden}
 	aria-busy={href === undefined && !ariaHidden ? isLoading : undefined}
-	class={cn(
-		'rounded-full px-[unset]',
-		size === 'sm'
-			? 'size-8 [&>svg]:size-5'
-			: size === 'md'
-				? 'size-10 [&>svg]:size-6'
-				: 'size-12 [&>svg]:size-7',
-		className,
-	)}
+	class={cn(iconButtonVariants({ size }), className)}
 	{href}
 	{...restProps as any}
 >

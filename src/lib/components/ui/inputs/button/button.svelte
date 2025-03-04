@@ -2,26 +2,43 @@
 	lang="ts"
 	module
 >
-	import type { ButtonProps } from '$components/ui/inputs/button';
+	import type { IconComponent } from '$components/ui/data-display/icons';
+	import type {
+		ButtonBaseAnchorElement,
+		ButtonBaseButtonElement,
+		ButtonBaseWithoutHTML,
+	} from '$components/ui/inputs/button/base';
 	import { ButtonBase } from '$components/ui/inputs/button/base';
 	import { getButtonGroupContext } from '$components/ui/inputs/button/group';
 	import { cn } from '$utils';
+
+	type ButtonWithoutHTML = ButtonBaseWithoutHTML & {
+		startIcon?: IconComponent;
+		endIcon?: IconComponent;
+	};
+
+	type ButtonElement = ButtonBaseButtonElement & {
+		loadingText?: string;
+	};
+
+	type AnchorElement = ButtonBaseAnchorElement & {
+		loadingText?: never;
+	};
+
+	export type ButtonProps = ButtonWithoutHTML & (ButtonElement | AnchorElement);
 </script>
 
 <script lang="ts">
 	let {
 		ref = $bindable(null),
 		'class': className,
-		variant = 'contained',
-		color = 'primary',
-		size = 'md',
+		variant,
+		color,
+		size,
 		href,
 		loadingIconPosition = 'end',
 		isLoading = $bindable(href === undefined ? false : undefined),
 		'aria-hidden': ariaHidden,
-		'aria-busy': ariaBusy = href === undefined && !ariaHidden
-			? isLoading
-			: undefined,
 		'startIcon': StartIcon,
 		'endIcon': EndIcon,
 		loadingText,
@@ -36,32 +53,23 @@
 		color = groupContext.color;
 		size = groupContext.size;
 	}
-
-	const reactiveProps = $derived({
-		variant,
-		color,
-		size,
-		href,
-		loadingIconPosition,
-		'aria-hidden': ariaHidden,
-		'aria-busy': isLoading || ariaBusy || undefined,
-		'class': className ? cn(className) : undefined,
-		...restProps,
-	});
 </script>
 
-<!-- 
-  The `as any` on the `reactiveProps` spread fixes the following error... 
-    "Expression produces a union type that is too complex to represent (TS2590)".  
-  TypeScript cannot compute the full union type, so we use 
-    `as any` to bypass the limitation.  
--->
+<!-- Too complex uninion type -->
 <ButtonBase
 	bind:ref
 	bind:isLoading
-	{...reactiveProps as any}
+	aria-busy={href === undefined && !ariaHidden ? isLoading : undefined}
+	aria-hidden={ariaHidden}
+	class={className ? cn(className) : undefined}
+	{loadingIconPosition}
+	{variant}
+	{color}
+	{size}
+	{href}
+	{...restProps as any}
 >
-	{#if StartIcon && (isLoading || ariaBusy) && loadingIconPosition !== 'start'}
+	{#if StartIcon && isLoading && loadingIconPosition !== 'start'}
 		<StartIcon />
 	{/if}
 
@@ -71,7 +79,7 @@
 		{@render children?.()}
 	{/if}
 
-	{#if EndIcon && (isLoading || ariaBusy) && loadingIconPosition !== 'end'}
+	{#if EndIcon && isLoading && loadingIconPosition !== 'end'}
 		<EndIcon />
 	{/if}
 </ButtonBase>
