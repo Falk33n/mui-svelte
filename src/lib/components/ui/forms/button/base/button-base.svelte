@@ -6,7 +6,7 @@
 	import {
 		buttonBaseVariants,
 		type ButtonBaseProps,
-	} from '$components/ui/inputs/button/base';
+	} from '$components/ui/forms/button/base';
 	import { cn, hslToHsla } from '$utils';
 
 	type ButtonMouseEvent = MouseEvent & {

@@ -7,11 +7,11 @@
 		type ButtonBaseAnchorElement,
 		type ButtonBaseButtonElement,
 		type ButtonBaseWithoutHTML,
-	} from '$components/ui/inputs/button/base';
+	} from '$components/ui/forms/button/base';
 	import {
 		iconButtonVariants,
 		type IconButtonSize,
-	} from '$components/ui/inputs/button/icon';
+	} from '$components/ui/forms/button/icon';
 	import { cn } from '$utils';
 
 	type WithoutHTML = Omit<ButtonBaseWithoutHTML, 'size'> & {

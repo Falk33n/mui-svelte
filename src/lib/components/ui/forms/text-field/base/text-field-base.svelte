@@ -7,7 +7,7 @@
 		type TextFieldColor,
 		type TextFieldSize,
 		type TextFieldVariant,
-	} from '$components/ui/inputs/text-field';
+	} from '$components/ui/forms/text-field/base';
 	import type { WithoutChildren, WithRef } from '$types';
 	import { cn } from '$utils';
 	import type {
@@ -22,8 +22,9 @@
 	}>;
 
 	type TextareaElement = WithoutChildren<
-		Omit<HTMLTextareaAttributes, 'aria-label' | 'aria-labelledby'>
+		Omit<HTMLTextareaAttributes, 'aria-label' | 'aria-labelledby' | 'value'>
 	> & {
+		value?: HTMLTextareaAttributes['value'];
 		accept?: never;
 		alt?: never;
 		capture?: never;
@@ -48,8 +49,12 @@
 	};
 
 	type InputElement = WithoutChildren<
-		Omit<HTMLInputAttributes, 'aria-label' | 'aria-labelledby' | 'size'>
+		Omit<
+			HTMLInputAttributes,
+			'aria-label' | 'aria-labelledby' | 'size' | 'value'
+		>
 	> & {
+		value?: HTMLTextareaAttributes['value'];
 		autocorrect?: never;
 		cols?: never;
 		rows?: never;

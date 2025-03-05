@@ -4,7 +4,7 @@ export {
 	getToggleButtonGroupContext,
 	default as ToggleButtonGroup,
 	type ToggleButtonGroupProps,
-} from '$components/ui/inputs/button/toggle/group/toggle-button-group.svelte';
+} from '$components/ui/inputs/forms/toggle/group/toggle-button-group.svelte';
 
 export const toggleButtonGroupVariants = tv({
 	base: 'group rounded-md bg-transparent inline-flex items-center justify-center [&>*]:rounded-none [&>*]:focus-visible:z-1',

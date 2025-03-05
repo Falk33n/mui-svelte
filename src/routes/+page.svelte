@@ -1,5 +1,5 @@
 <script lang="ts">
-	import TextField from '../lib/components/ui/inputs/text-field/text-field.svelte';
+	import TextField from '../lib/components/ui/forms/text-field/base/text-field-base.svelte';
 </script>
 
 <div class="mb-20 w-full">d</div>

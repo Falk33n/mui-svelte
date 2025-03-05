@@ -3,7 +3,7 @@ import { tv, type VariantProps } from 'tailwind-variants';
 export {
 	default as IconButton,
 	type IconButtonProps,
-} from '$components/ui/inputs/button/icon/icon-button.svelte';
+} from '$components/ui/forms/button/icon/icon-button.svelte';
 
 export const iconButtonVariants = tv({
 	base: 'rounded-full px-[unset]',

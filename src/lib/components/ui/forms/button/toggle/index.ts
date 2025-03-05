@@ -1,10 +1,10 @@
-import { iconButtonVariants } from '$components/ui/inputs/button/icon';
+import { iconButtonVariants } from '$components/ui/forms/button/icon';
 import { tv, type VariantProps } from 'tailwind-variants';
 
 export {
 	default as ToggleButton,
 	type ToggleButtonProps,
-} from '$components/ui/inputs/button/toggle/toggle-button.svelte';
+} from '$components/ui/forms/button/toggle/toggle-button.svelte';
 
 export const toggleButtonVariants = tv({
 	extend: iconButtonVariants,
