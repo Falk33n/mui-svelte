@@ -1,12 +1,12 @@
 import { tv, type VariantProps } from 'tailwind-variants';
 
 export {
-	default as TextField,
+	default as TextFieldBase,
 	type TextFieldProps,
-} from '$components/ui/forms/text-field/base/text-field-base.svelte';
+} from '$components/ui/forms/fields/text-field/base/text-field-base.svelte';
 
 export const textFieldVariants = tv({
-	base: 'bg-transparent rounded-md w-full shadow-sm my-3 flex border-input items-center justify-center transition-all text-base duration-200 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:bg-secondary disabled:text-secondary-foreground disabled:opacity-50',
+	base: 'bg-transparent rounded-md w-full peer shadow-sm my-3 flex border-input items-center justify-center transition-all text-base duration-200 placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-1 disabled:pointer-events-none disabled:bg-secondary disabled:text-secondary-foreground disabled:opacity-50',
 	variants: {
 		variant: {
 			outlined: 'border hover:border-ring',

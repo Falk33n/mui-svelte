@@ -7,7 +7,7 @@
 		type TextFieldColor,
 		type TextFieldSize,
 		type TextFieldVariant,
-	} from '$components/ui/forms/text-field/base';
+	} from '$components/ui/forms/fields/text-field/base';
 	import type { WithoutChildren, WithRef } from '$types';
 	import { cn } from '$utils';
 	import type {
