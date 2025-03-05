@@ -77,6 +77,22 @@
 		font-display: swap;
 	}
 
+	::-webkit-scrollbar {
+		@apply size-[8px];
+	}
+
+	::-webkit-scrollbar-track {
+		@apply bg-muted-foreground/20 rounded-[10px];
+	}
+
+	::-webkit-scrollbar-thumb {
+		@apply bg-muted-foreground/35 rounded-[10px];
+	}
+
+	::-webkit-scrollbar-thumb:hover {
+		@apply bg-muted-foreground/60;
+	}
+
 	* {
 		@apply border-border;
 
@@ -90,10 +106,10 @@
 	}
 
 	body {
-		@apply bg-background overflow-x-hidden font-geist-sans text-foreground;
+		@apply bg-background font-geist-sans text-foreground overflow-x-hidden;
 	}
 
 	.container {
-		@apply mx-auto px-8 max-w-[1400px];
+		@apply mx-auto max-w-[1400px] px-8;
 	}
 }
