@@ -4,7 +4,7 @@
 ></script>
 
 <script lang="ts">
-	import { TextFieldBase } from './base';
+	import { TextFieldBase } from '$components/ui/forms/fields/text-field/base';
 </script>
 
 <TextFieldBase></TextFieldBase>
