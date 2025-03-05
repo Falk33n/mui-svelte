@@ -7,7 +7,7 @@ import type {
 import type { VariantProps } from 'tailwind-variants';
 import { tv } from 'tailwind-variants';
 
-export { default as ButtonBase } from '$components/ui/inputs/button/base/button-base.svelte';
+export { default as ButtonBase } from '$components/ui/forms/button/base/button-base.svelte';
 
 export const buttonBaseVariants = tv({
 	base: 'relative overflow-hidden bg-transparent rounded-md gap-2 inline-flex cursor-pointer items-center justify-center whitespace-nowrap font-medium transition-all text-base duration-200 uppercase focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring disabled:pointer-events-none disabled:bg-secondary disabled:text-secondary-foreground disabled:opacity-50 [&>svg]:size-5',

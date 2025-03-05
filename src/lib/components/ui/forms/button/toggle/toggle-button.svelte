@@ -2,13 +2,13 @@
 	lang="ts"
 	module
 >
-	import { ButtonBase } from '$components/ui/inputs/button/base';
+	import { ButtonBase } from '$components/ui/forms/button/base';
 	import {
 		toggleButtonVariants,
 		type ToggleButtonColor,
 		type ToggleButtonSize,
-	} from '$components/ui/inputs/button/toggle';
-	import { getToggleButtonGroupContext } from '$components/ui/inputs/button/toggle/group';
+	} from '$components/ui/forms/button/toggle';
+	import { getToggleButtonGroupContext } from '$components/ui/forms/button/toggle/group';
 	import type { ButtonMouseEvent, WithRef } from '$types';
 	import { cn } from '$utils';
 	import type { HTMLButtonAttributes } from 'svelte/elements';

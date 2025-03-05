@@ -5,7 +5,7 @@ export {
 	default as ButtonGroup,
 	getButtonGroupContext,
 	type ButtonGroupProps,
-} from '$components/ui/inputs/button/group/button-group.svelte';
+} from '$components/ui/forms/button/group/button-group.svelte';
 
 export const buttonGroupVariants = tv({
 	base: 'group rounded-md bg-transparent inline-flex items-center justify-center [&>*]:rounded-none [&>*]:focus-visible:z-1',

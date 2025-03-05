@@ -7,7 +7,7 @@
 		type ToggleButtonGroupColor,
 		type ToggleButtonGroupOrientation,
 		type ToggleButtonGroupSize,
-	} from '$components/ui/inputs/button/toggle/group';
+	} from '$components/ui/forms/button/toggle/group';
 	import type { WithRef } from '$types';
 	import { cn } from '$utils';
 	import { getContext, hasContext, setContext } from 'svelte';

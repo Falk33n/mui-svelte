@@ -7,9 +7,9 @@
 		ButtonBaseAnchorElement,
 		ButtonBaseButtonElement,
 		ButtonBaseWithoutHTML,
-	} from '$components/ui/inputs/button/base';
-	import { ButtonBase } from '$components/ui/inputs/button/base';
-	import { getButtonGroupContext } from '$components/ui/inputs/button/group';
+	} from '$components/ui/forms/button/base';
+	import { ButtonBase } from '$components/ui/forms/button/base';
+	import { getButtonGroupContext } from '$components/ui/forms/button/group';
 	import { cn } from '$utils';
 
 	type ButtonWithoutHTML = ButtonBaseWithoutHTML & {

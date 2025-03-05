@@ -8,7 +8,7 @@
 		type ButtonGroupOrientation,
 		type ButtonGroupSize,
 		type ButtonGroupVariant,
-	} from '$components/ui/inputs/button/group';
+	} from '$components/ui/forms/button/group';
 	import type { WithRef } from '$types';
 	import { cn } from '$utils';
 	import { getContext, hasContext, setContext } from 'svelte';
