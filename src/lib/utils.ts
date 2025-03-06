@@ -1,16 +1,15 @@
 import { type ClassValue, clsx } from 'clsx';
 import { twMerge } from 'tailwind-merge';
 
-/**
- * - Function to merge `classNames` in the correct order.
- * - Also removes duplicate `classNames`.
- */
-export const cn = (...inputs: ClassValue[]) => twMerge(clsx(inputs));
+export function cn(...inputs: ClassValue[]) {
+	return twMerge(clsx(inputs));
+}
 
-export const createPortal = (
-	node: HTMLElement,
-	target: HTMLElement = document.body.querySelector('div') ?? document.body,
-) => {
+export function createPortal(node: HTMLElement, target?: HTMLElement) {
+	if (!target) {
+		target = document.body.querySelector('div') ?? document.body;
+	}
+
 	target.appendChild(node);
 
 	return {
@@ -20,12 +19,12 @@ export const createPortal = (
 			}
 		},
 	};
-};
+}
 
-export const getUniqueId = (length: number = 5) => {
+export function getUniqueId(length: number = 5) {
 	return crypto.randomUUID().replace(/-/g, '').substring(0, length);
-};
+}
 
-export const hslToHsla = (hsl: string, alpha: number) => {
+export function hslToHsla(hsl: string, alpha: number) {
 	return hsl.replace('hsl', 'hsla').replace(')', `, ${alpha})`);
-};
+}
